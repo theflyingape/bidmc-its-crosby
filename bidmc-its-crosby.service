@@ -1,0 +1,14 @@
+[Unit]
+Description=BIDMC ITS CrOSby services for G Suite Admin
+After=local-fs.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/rh/rh-nodejs8/root/usr/bin/node crosby
+KillMode=process
+SyslogIdentifier=crosby
+WorkingDirectory=/opt/crosby
+#TasksMax=200
+
+[Install]
+WantedBy=multi-user.target

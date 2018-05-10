@@ -1,0 +1,11 @@
+{
+  "name": "BIDMC ITS CrOSby services",
+  "short_name": "CrOSby",
+  "lang": "en-US",
+  "start_url": "https://cassiopeia.bidmc.harvard.edu/crosby/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "icons": [
+    { "src": "gcp.png", "sizes": "192x192", "type":"image/png" }
+  ]
+}
