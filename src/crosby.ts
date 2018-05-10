@@ -51,7 +51,7 @@ syslog.open(process.title)
 // Load client secrets from the downloaded JSON OAuth client ID file:
 // https://console.developers.google.com/apis/credentials?project=ccc-classic
 try {
-	appClientId = JSON.parse(fs.readFileSync('./client_secret.json').toString())
+	appClientId = JSON.parse(fs.readFileSync(TOKEN_DIR + 'client_secret.json').toString())
 }
 catch (err) {
 	console.log('Error loading client secret file: ', err)
