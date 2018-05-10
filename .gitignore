@@ -1,6 +1,7 @@
 *.js
 *.js.map
 *.d.ts
+.credentials
 node_modules
 keys
 client_secret.json

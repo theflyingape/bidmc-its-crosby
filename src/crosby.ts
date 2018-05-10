@@ -30,15 +30,15 @@ interface oauth_clientid {
 }
 
 // If modifying these scopes, delete any previously saved credentials
-// at ~/.credentials/admin-crosby.json
+// at .credentials/admin-crosby.json
 const SCOPES = [
 	'https://www.googleapis.com/auth/admin.directory.device.chromeos',
 	'https://www.googleapis.com/auth/admin.directory.domain.readonly',
 	'https://www.googleapis.com/auth/admin.directory.orgunit.readonly',
 	'https://www.googleapis.com/auth/admin.directory.resource.calendar.readonly'
 ]
-const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/'
+//const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/'
+const TOKEN_DIR = './.credentials/'
 const TOKEN_PATH = TOKEN_DIR + 'admin-crosby.json'
 
 export let appClientId: oauth_clientid
