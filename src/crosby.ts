@@ -44,7 +44,7 @@ const TOKEN_PATH = TOKEN_DIR + 'admin-crosby.json'
 export let appClientId: oauth_clientid
 
 process.chdir(__dirname)
-process.title = 'CrOSby'
+process.title = 'crosby'
 syslog.upto('LOG_INFO')
 syslog.open(process.title)
 
@@ -74,8 +74,8 @@ authorize(appClientId, (auth) => {
 	})
 })
 
-//dns.lookup('localhost', (err, addr, family) => {
-dns.lookup('0.0.0.0', (err, addr, family) => {
+dns.lookup('localhost', (err, addr, family) => {
+//dns.lookup('0.0.0.0', (err, addr, family) => {
 
 	const app = express()
 	app.set('trust proxy', ['loopback', addr])

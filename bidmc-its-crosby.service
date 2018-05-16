@@ -4,6 +4,8 @@ After=local-fs.target network-online.target
 
 [Service]
 Type=simple
+User=root
+Group=wheel
 ExecStart=/opt/rh/rh-nodejs8/root/usr/bin/node crosby
 KillMode=process
 SyslogIdentifier=crosby
