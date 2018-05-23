@@ -107,7 +107,6 @@ dns.lookup('localhost', (err, addr, family) => {
 	//	return our entire OU list
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?type=all&key={YOUR_API_KEY}
 	app.get('/crosby/ou/', (req, res) => {
-		console.log(req)
 		authorize(appClientId, (auth) => {
 			directory.orgunits.list({ auth: auth,
 				customerId: 'my_customer', type: 'all'
