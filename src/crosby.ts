@@ -48,6 +48,13 @@ process.title = 'crosby'
 syslog.upto('LOG_INFO')
 syslog.open(process.title)
 
+function who(req): string
+{
+	let client = req.header('x-forwarded-for') || req.hostname
+	let who = Buffer.from(req.header('authorization').sub('Basic ','')).toString().split(':')[0]
+	return `${who}@${client} `
+}
+
 // Load client secrets from the downloaded JSON OAuth client ID file:
 // https://console.developers.google.com/apis/credentials?project=ccc-classic
 try {
@@ -67,7 +74,7 @@ authorize(appClientId, (auth) => {
 		customer: 'my_customer', domainName: 'bidmc.harvard.edu'
 		}, (err, response) => {
 		if (err) {
-			syslog.error('fetch domain :: ', err)
+			syslog.error('test fetch domain :: ', err)
 			return
 		}
 		console.log(response.status, response.statusText, response.data.domainName)
@@ -100,16 +107,17 @@ dns.lookup('localhost', (err, addr, family) => {
 	//	return our entire OU list
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?type=all&key={YOUR_API_KEY}
 	app.get('/crosby/ou/', (req, res) => {
+		console.log(req)
 		authorize(appClientId, (auth) => {
 			directory.orgunits.list({ auth: auth,
 				customerId: 'my_customer', type: 'all'
 			}, (err, response) => {
 				if (err) {
-					syslog.error('fetch ou list :: ', err.message)
+					syslog.error(who(req) + 'fetch ou list :: ', err.message)
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note('fetch ou list')
+					syslog.note(who(req) + 'fetch ou list')
 					let ou = response.data.organizationUnits
 					ou.sort((a, b) => {
 						var x = a.orgUnitPath.toLowerCase()
@@ -133,11 +141,11 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', deviceId: req.query.id
 			}, (err, response) => {
 				if (err) {
-					syslog.error('fetch device :: ', err.message)
+					syslog.error(who(req) + 'fetch device :: ', err.message)
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note(`fetch device ${req.query.id}`)
+					syslog.note(who(req) + `fetch device ${req.query.id}`)
 					res.send(response.data)
 				}
 				res.end()
@@ -156,11 +164,11 @@ dns.lookup('localhost', (err, addr, family) => {
 			if (req.query.wifi_mac) params.query = `wifi_mac:${req.query.wifi_mac}`
 			directory.chromeosdevices.list(params, (err, response) => {
 				if (err) {
-					syslog.error(`fetch devices ${params.query || 'all'}:: `, err.message)
+					syslog.error(who(req) + `fetch devices ${params.query || 'all'}:: `, err.message)
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note(`fetch devices ${params.query || 'all'}`)
+					syslog.note(who(req) + `fetch devices ${params.query || 'all'}`)
 					let result = params.query ? response.data.chromeosdevices[0] : response.data.chromeosdevices
 					res.send(result)
 				}
@@ -177,11 +185,11 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', orgUnitPath: req.query.ou, resource: deviceIds
 			}, (err, response) => {
 				if (err) {
-					syslog.error('move device :: ', err.message)
+					syslog.error(who(req) + 'move device :: ', err.message)
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note(`move device ${req.query.id} to ${req.query.ou}`)
+					syslog.note(who(req) + `move device ${req.query.id} to ${req.query.ou}`)
 					res.send(response.data)
 				}
 				res.end()
@@ -201,11 +209,11 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', deviceId: req.query.id, resource: patch
 			}, (err, response) => {
 				if (err) {
-					syslog.error('patch device :: ', err.message)
+					syslog.error(who(req) + 'patch device :: ', err.message)
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note(`patch device ${req.query.id} to ${patch}`)
+					syslog.note(who(req) + `patch device ${req.query.id} to ${patch}`)
 					res.send(response.data)
 				}
 				res.end()
