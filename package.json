@@ -1,6 +1,6 @@
 {
   "name": "crosby",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Chrome OS gateway to our Google for Business APIs",
   "main": "crosby.js",
   "scripts": {
