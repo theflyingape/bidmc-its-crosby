@@ -106,7 +106,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			}, (err, response) => {
 				if (err) {
 					syslog.error('fetch ou list :: ', err.message)
-					res.status(500).send(err.message)
+					res.status(500).send({message: err.message})
 				}
 				else {
 					syslog.note('fetch ou list')
@@ -134,7 +134,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			}, (err, response) => {
 				if (err) {
 					syslog.error('fetch device :: ', err.message)
-					res.status(500).send(err.message)
+					res.status(500).send({message: err.message})
 				}
 				else {
 					syslog.note(`fetch device ${req.query.id}`)
@@ -157,7 +157,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			directory.chromeosdevices.list(params, (err, response) => {
 				if (err) {
 					syslog.error(`fetch devices ${params.query || 'all'}:: `, err.message)
-					res.status(500).send(err.message)
+					res.status(500).send({message: err.message})
 				}
 				else {
 					syslog.note(`fetch devices ${params.query || 'all'}`)
@@ -178,7 +178,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			}, (err, response) => {
 				if (err) {
 					syslog.error('move device :: ', err.message)
-					res.status(500).send(err.message)
+					res.status(500).send({message: err.message})
 				}
 				else {
 					syslog.note(`move device ${req.query.id} to ${req.query.ou}`)
@@ -202,7 +202,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			}, (err, response) => {
 				if (err) {
 					syslog.error('patch device :: ', err.message)
-					res.status(500).send(err.message)
+					res.status(500).send({message: err.message})
 				}
 				else {
 					syslog.note(`patch device ${req.query.id} to ${patch}`)
