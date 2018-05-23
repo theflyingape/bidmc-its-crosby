@@ -132,7 +132,8 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', deviceId: req.query.id
 			}, (err, response) => {
 				if (err) {
-					syslog.error('fetch device :: ', err)
+					syslog.error('fetch device :: ', err.message)
+					res.status(500).send(err.message)
 				}
 				else {
 					syslog.note(`fetch device ${req.query.id}`)
