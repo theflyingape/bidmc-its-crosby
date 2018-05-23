@@ -105,7 +105,8 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', type: 'all'
 			}, (err, response) => {
 				if (err) {
-					syslog.error('fetch ou list :: ', err)
+					syslog.error('fetch ou list :: ', err.message)
+					res.status(500).send(err.message)
 				}
 				else {
 					syslog.note('fetch ou list')
@@ -155,8 +156,8 @@ dns.lookup('localhost', (err, addr, family) => {
 			if (req.query.wifi_mac) params.query = `wifi_mac:${req.query.wifi_mac}`
 			directory.chromeosdevices.list(params, (err, response) => {
 				if (err) {
-					syslog.error(`fetch devices ${params.query || 'all'}:: `, err)
-					res.send(err)
+					syslog.error(`fetch devices ${params.query || 'all'}:: `, err.message)
+					res.status(500).send(err.message)
 				}
 				else {
 					syslog.note(`fetch devices ${params.query || 'all'}`)
@@ -176,7 +177,8 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', orgUnitPath: req.query.ou, resource: deviceIds
 			}, (err, response) => {
 				if (err) {
-					syslog.error('move device :: ', err)
+					syslog.error('move device :: ', err.message)
+					res.status(500).send(err.message)
 				}
 				else {
 					syslog.note(`move device ${req.query.id} to ${req.query.ou}`)
@@ -199,7 +201,8 @@ dns.lookup('localhost', (err, addr, family) => {
 				customerId: 'my_customer', deviceId: req.query.id, resource: patch
 			}, (err, response) => {
 				if (err) {
-					syslog.error('patch device :: ', err)
+					syslog.error('patch device :: ', err.message)
+					res.status(500).send(err.message)
 				}
 				else {
 					syslog.note(`patch device ${req.query.id} to ${patch}`)
