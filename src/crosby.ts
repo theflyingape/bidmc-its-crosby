@@ -51,7 +51,7 @@ syslog.open(process.title)
 function who(req): string
 {
 	let client = req.header('x-forwarded-for') || req.hostname
-	let who = Buffer.from(req.header('authorization').sub('Basic ','')).toString().split(':')[0]
+	let who = Buffer.from(req.header('authorization').split(' ')[1]).toString().split(':')[0]
 	return `${who}@${client} `
 }
 
