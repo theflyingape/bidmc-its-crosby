@@ -3,18 +3,16 @@
  */
 import dns = require('dns')
 import express = require('express')
-import http = require('http')
 import https = require('https')
 import fs = require('fs')
-import os = require('os')
 import readline = require('readline')
-import serverStatic = require('serve-static')
 import syslog = require('modern-syslog')
 
-//	Google APIs v29
+//	Google APIs v32
 import { GoogleApis } from 'googleapis'
 import { GoogleAuth, JWT, OAuth2Client } from 'google-auth-library'
-import { Admin } from 'googleapis/build/src/apis/admin/directory_v1'
+//v29 - no longer required
+//import { Admin } from 'googleapis/build/src/apis/admin/directory_v1'
 //import * as admin_directory_v1 from 'googleapis/build/src/apis/admin/directory_v1'
 
 interface oauth_clientid {
@@ -45,8 +43,8 @@ export let appClientId: oauth_clientid
 
 process.chdir(__dirname)
 process.title = 'crosby'
-syslog.upto('LOG_INFO')
 syslog.open(process.title)
+syslog.upto(6)	//	LOG_INFO
 
 function who(req): string
 {
@@ -67,7 +65,9 @@ catch (err) {
 
 //	service sanity check on startup: return our top domain
 const google = new GoogleApis()
-const directory = google.admin<Admin>('directory_v1')
+const directory = google.admin('directory_v1')
+//v29 - no longer required
+//const directory = google.admin<Admin>('directory_v1')
 
 authorize(appClientId, (auth) => {
 	directory.domains.get({ auth: auth,
@@ -90,7 +90,6 @@ dns.lookup('localhost', (err, addr, family) => {
 	let ssl = {
 		key: fs.readFileSync('./keys/localhost.key'), cert: fs.readFileSync('./keys/localhost.crt')
 	}
-//let server = http.createServer(app)
 	let server = https.createServer(ssl, app)
 	let port = parseInt(process.env.PORT) || 3333
   
@@ -181,7 +180,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			console.log(`move device ${req.query.id} to ${req.query.ou}`)
 			let deviceIds = { deviceIds: [ req.query.id ] }
 			directory.chromeosdevices.moveDevicesToOu({ auth: auth,
-				customerId: 'my_customer', orgUnitPath: req.query.ou, resource: deviceIds
+				customerId: 'my_customer', orgUnitPath: req.query.ou, requestBody: deviceIds
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'move device :: ', err.message)
@@ -205,7 +204,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			if (req.query.notes) patch.notes = req.query.notes
 			console.log(`patch device ${req.query.id} to ${patch}`)
 			directory.chromeosdevices.patch({ auth: auth,
-				customerId: 'my_customer', deviceId: req.query.id, resource: patch
+				customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'patch device :: ', err.message)
