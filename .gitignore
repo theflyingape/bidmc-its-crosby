@@ -4,4 +4,3 @@
 .credentials
 node_modules
 keys
-client_secret.json

@@ -14,3 +14,5 @@ This Node.js express server provides a REST API backend service purposed mainly 
 [*] watching [issue #1157](https://github.com/google/google-api-nodejs-client/issues/1157)
 
 **Note:** There may be need / opportunity to expand this service gateway to integrate device registration with our standalone Electronic Health Record, [webOMR](https://apps.bidmc.org/webomr_training/), for printing and flag tasks (aka **ZO**).
+
+Apache access into this service is proxy configured to only allow ITS technician access using mod_authnz_pam.
