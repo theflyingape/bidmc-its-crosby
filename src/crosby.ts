@@ -167,7 +167,13 @@ dns.lookup('localhost', (err, addr, family) => {
 				}
 				else {
 					syslog.note(who(req) + `fetch devices ${params.query || 'all'}`)
-					let result = params.query ? response.data.chromeosdevices[0] : response.data.chromeosdevices
+					let result = {}
+					if (params.query) {
+						if (response.data) result = response.data.chromeosdevices[0]
+					}
+					else {
+						result = response.data.chromeosdevices
+					}
 					res.send(result)
 				}
 				res.end()
