@@ -70,7 +70,7 @@ function previewFile(file) {
   reader.readAsDataURL(file)
   reader.onloadend = function() {
     let el = document.createElement('PRE')
-    let txt = document.createTextNode(atob(reader.result.split(',')[1]))
+    let txt = document.createTextNode(reader.result)
     el.appendChild(txt)
     document.getElementById('gallery').appendChild(el)
   }
@@ -93,11 +93,12 @@ function uploadFile(file, i) {
       updateProgress(i, 100) // <- Add this
     }
     else if (xhr.readyState == 4 && xhr.status != 200) {
-      let el = document.createElement('PRE')
-      let txt = document.createTextNode('<b>' + xhr.status + ' - ' + xhr.statusText + '</b>')
-      el.appendChild(txt)
-      document.getElementById('status').appendChild(el)
+      // Error. Inform the user
     }
+    let el = document.createElement('PRE')
+    let txt = document.createTextNode(xhr.readyState + ' - ' + xhr.statusText)
+    el.appendChild(txt)
+    document.getElementById('status').appendChild(el)
   })
 
   formData.append('file', file)
