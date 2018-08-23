@@ -104,7 +104,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	syslog.note(`listening on ${port}`)
 
 	app.use('/crosby', express.static(__dirname + '/static'))
-	app.use(fileUpload());
+	app.use(fileUpload())
 
 	//	return our entire OU list
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?type=all&key={YOUR_API_KEY}
@@ -227,6 +227,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	})
 
 	app.post('/crosby/upload', function (req, res) {
+		console.log('/crosby/upload', req)
 		if (!req.files)
 			return res.status(400).send('No file was uploaded')
 
