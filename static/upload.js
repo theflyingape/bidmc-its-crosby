@@ -70,7 +70,7 @@ function previewFile(file) {
   reader.readAsDataURL(file)
   reader.onloadend = function() {
     let el = document.createElement('PRE')
-    let txt = document.createTextNode(reader.result)
+    let txt = document.createTextNode(atob(reader.result.split(',')[1]))
     el.appendChild(txt)
     document.getElementById('gallery').appendChild(el)
   }
