@@ -3,12 +3,13 @@
  */
 import dns = require('dns')
 import express = require('express')
+import fileUpload = require('express-fileupload')
 import https = require('https')
 import fs = require('fs')
 import readline = require('readline')
 import syslog = require('modern-syslog')
 
-//	Google APIs v32
+//	Google APIs v33
 import { GoogleApis } from 'googleapis'
 import { GoogleAuth, JWT, OAuth2Client } from 'google-auth-library'
 //v29 - no longer required
@@ -49,7 +50,9 @@ syslog.upto(6)	//	LOG_INFO
 function who(req): string
 {
 	let client = req.header('x-forwarded-for') || req.hostname
-	let who = Buffer.from(req.header('authorization').split(' ')[1], 'base64').toString().split(':')[0]
+	let who = '<anonymous>'
+	if (req.header('authorization'))
+		who = Buffer.from(req.header('authorization').split(' ')[1], 'base64').toString().split(':')[0]
 	return `${who}@${client} `
 }
 
@@ -81,8 +84,8 @@ authorize(appClientId, (auth) => {
 	})
 })
 
-dns.lookup('localhost', (err, addr, family) => {
-//dns.lookup('0.0.0.0', (err, addr, family) => {
+//dns.lookup('localhost', (err, addr, family) => {
+dns.lookup('0.0.0.0', (err, addr, family) => {
 
 	const app = express()
 	app.set('trust proxy', ['loopback', addr])
@@ -96,12 +99,12 @@ dns.lookup('localhost', (err, addr, family) => {
 	server.listen(port, addr)
 	console.log('*'.repeat(80))
 	console.log(`Node.js ${process.version} BIDMC ITS CrOSby service`)
-	console.log(`startup on ${process.env['HOSTNAME']} (${process.platform}) at ` +
-	new Date())
+	console.log(`startup on ${process.env['HOSTNAME']} (${process.platform}) at ` + new Date())
 	console.log(`listening on ${port}`)
 	syslog.note(`listening on ${port}`)
 
 	app.use('/crosby', express.static(__dirname + '/static'))
+	app.use(fileUpload());
 
 	//	return our entire OU list
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?type=all&key={YOUR_API_KEY}
@@ -159,6 +162,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			//	https://support.google.com/chrome/a/answer/1698333
 			if (req.query.id) params.query = `id:${req.query.id}`
 			if (req.query.asset_id) params.query = `asset_id:${req.query.asset_id}`
+			if (req.query.ethernet_mac) params.query = `ethernet_mac:${req.query.ethernet_mac}`
 			if (req.query.wifi_mac) params.query = `wifi_mac:${req.query.wifi_mac}`
 			directory.chromeosdevices.list(params, (err, response) => {
 				if (err) {
@@ -221,6 +225,20 @@ dns.lookup('localhost', (err, addr, family) => {
 			})
 		})
 	})
+
+	app.post('/crosby/upload', function (req, res) {
+		if (!req.files)
+			return res.status(400).send('No file was uploaded')
+
+		let config = req.files['config']
+		console.log(`upload file ${config}`)
+		config.mv(__dirname, (err) => {
+			if (err)
+				return res.status(500).send(err)
+			return res.send('file uploaded')
+		})
+	})
+
 })
 
 /**
