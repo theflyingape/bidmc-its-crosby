@@ -231,13 +231,19 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 			return res.status(400).send('No file was uploaded')
 
 		let config = <fileUpload.UploadedFile>req.files.file
-		console.log(`upload file ${config.name} requested`)
+		syslog.note(who(req) + `upload file ${config.name} requested`)
 		if (config.name == 'gc-by-ou.json')
 			config.mv(process.cwd() + '/static/' + config.name, function(err) {
-				if (err)
+				if (err) {
+					syslog.error(who(req) + err)
 					return res.status(500).send(err)
+				}
 				return res.send('file uploaded')
 			})
+		else {
+			syslog.error(who(req) + 'filename mismatch')
+			return res.status(500).send('filename mismatch')
+		}
 	})
 
 })

@@ -95,17 +95,13 @@ function uploadFile(file, i) {
     else if (xhr.readyState == 4 && xhr.status != 200) {
       // Error. Inform the user
     }
-    let el = document.createElement('PRE')
-    let txt = document.createTextNode(new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText)
-    el.appendChild(txt)
-    document.getElementById('status').appendChild(el)
+    let txt = '<br>' + new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText
+    document.getElementById('status').innerHTML += txt
   })
 
   xhr.onload = function () {
-    let el = document.createElement('PRE')
-    let txt = document.createTextNode(new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText)
-    el.appendChild(txt)
-    document.getElementById('status').appendChild(el)
+    let txt = '<b>' + new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText + '</b>'
+    document.getElementById('status').innerHTML = txt
   }
 
   formData.append('file', file)
