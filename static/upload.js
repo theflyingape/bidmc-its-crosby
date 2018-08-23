@@ -96,10 +96,17 @@ function uploadFile(file, i) {
       // Error. Inform the user
     }
     let el = document.createElement('PRE')
-    let txt = document.createTextNode(xhr.readyState + ' - ' + xhr.statusText)
+    let txt = document.createTextNode(new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText)
     el.appendChild(txt)
     document.getElementById('status').appendChild(el)
   })
+
+  xhr.onload = function () {
+    let el = document.createElement('PRE')
+    let txt = document.createTextNode(new Date().toLocaleTimeString() + ': ' + xhr.readyState + ' - ' + xhr.statusText)
+    el.appendChild(txt)
+    document.getElementById('status').appendChild(el)
+  }
 
   formData.append('file', file)
   xhr.send(formData)
