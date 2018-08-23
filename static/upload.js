@@ -69,7 +69,7 @@ function previewFile(file) {
   let reader = new FileReader()
   reader.readAsDataURL(file)
   reader.onloadend = function() {
-    let txt = atob(reader.result.split(',')[1])
+    let txt = '<pre>' + atob(reader.result.split(',')[1]) + '</pre>'
     document.getElementById('gallery').innerHTML = txt
   }
 }

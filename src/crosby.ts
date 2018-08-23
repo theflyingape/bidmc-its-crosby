@@ -242,7 +242,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 			})
 		else {
 			syslog.error(who(req) + 'filename mismatch')
-			return res.status(500).send('filename mismatch')
+			return res.status(400).send('filename mismatch')
 		}
 	})
 
