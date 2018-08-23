@@ -184,7 +184,6 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
 	app.post('/crosby/move', function (req, res) {
 		authorize(appClientId, (auth) => {
-			console.log(`move device ${req.query.id} to ${req.query.ou}`)
 			let deviceIds = { deviceIds: [ req.query.id ] }
 			directory.chromeosdevices.moveDevicesToOu({ auth: auth,
 				customerId: 'my_customer', orgUnitPath: req.query.ou, requestBody: deviceIds
@@ -209,7 +208,6 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 			if (req.query.annotatedLocation) patch.annotatedLocation = req.query.annotatedLocation
 			if (req.query.annotatedUser) patch.annotatedUser = req.query.annotatedUser
 			if (req.query.notes) patch.notes = req.query.notes
-			console.log(`patch device ${req.query.id} to ${patch}`)
 			directory.chromeosdevices.patch({ auth: auth,
 				customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
 			}, (err, response) => {
@@ -218,7 +216,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 					res.status(500).send({message: err.message})
 				}
 				else {
-					syslog.note(who(req) + `patch device ${req.query.id} to ${patch}`)
+					syslog.note(who(req) + `patch device ${req.query.id} with ${JSON.stringify(patch)}`)
 					res.send(response.data)
 				}
 				res.end()
