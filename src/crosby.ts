@@ -227,12 +227,11 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	})
 
 	app.post('/crosby/upload', function (req, res) {
-		console.log('/crosby/upload', req)
 		if (!req.files)
 			return res.status(400).send('No file was uploaded')
 
-		let config = req.files['config']
-		console.log(`upload file ${config}`)
+		let config = <fileUpload.UploadedFile>req.files.file
+		console.log(`upload file ${config.name}`)
 		config.mv(__dirname, (err) => {
 			if (err)
 				return res.status(500).send(err)
