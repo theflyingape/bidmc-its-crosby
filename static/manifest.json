@@ -2,7 +2,7 @@
   "name": "BIDMC ITS CrOSby services",
   "short_name": "CrOSby",
   "lang": "en-US",
-  "start_url": "https://cassiopeia.bidmc.harvard.edu/crosby/",
+  "start_url": "https://crosby.bidmc.org/crosby/",
   "display": "fullscreen",
   "orientation": "landscape",
   "icons": [
