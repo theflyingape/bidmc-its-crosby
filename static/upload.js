@@ -69,10 +69,8 @@ function previewFile(file) {
   let reader = new FileReader()
   reader.readAsDataURL(file)
   reader.onloadend = function() {
-    let el = document.createElement('PRE')
-    let txt = document.createTextNode(atob(reader.result.split(',')[1]))
-    el.appendChild(txt)
-    document.getElementById('gallery').appendChild(el)
+    let txt = atob(reader.result.split(',')[1])
+    document.getElementById('gallery').innerHTML = txt
   }
 }
 
