@@ -1,0 +1,16 @@
+{
+  "/":
+	{ "prefix":"GC-", "nic":2, "wifi":1 },
+  "/Inventory Control":
+	{ "prefix":"GC_", "nic":1, "wifi":2 },
+  "/Private Sessions":
+	{ "prefix":"GCB", "nic":2, "wifi":1 },
+  "/Public Sessions":
+	{ "prefix":"GCC", "nic":1, "wifi":2 },
+  "/Public Sessions/Conference Rooms":
+	{ "prefix":"GCP", "nic":1, "wifi":2 },
+  "/Public Sessions/CITRIX XEN Desktop":
+	{ "prefix":"GCW", "nic":1, "wifi":2 },
+  "/TECH DEV":
+	{ "prefix":"GCT", "nic":2, "wifi":1 }
+}

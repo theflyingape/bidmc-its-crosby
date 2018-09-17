@@ -4,6 +4,7 @@
 import dns = require('dns')
 import express = require('express')
 import fileUpload = require('express-fileupload')
+import http = require('http')
 import https = require('https')
 import fs = require('fs')
 import readline = require('readline')
@@ -90,13 +91,19 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	const app = express()
 	app.set('trust proxy', ['loopback', addr])
 
-	let ssl = {
-		key: fs.readFileSync('./keys/localhost.key'), cert: fs.readFileSync('./keys/localhost.crt')
-	}
-	let server = https.createServer(ssl, app)
 	let port = parseInt(process.env.PORT) || 3333
-  
-	server.listen(port, addr)
+	try {
+		let ssl = {
+			key: fs.readFileSync('./keys/localhost.key'), cert: fs.readFileSync('./keys/localhost.crt')
+		}
+		let server = https.createServer(ssl, app)
+		server.listen(port, addr)
+	}
+	catch (err) {
+		let server = http.createServer(app)
+		server.listen(port, addr)
+	}
+
 	console.log('*'.repeat(80))
 	console.log(`Node.js ${process.version} BIDMC ITS CrOSby service`)
 	console.log(`startup on ${process.env['HOSTNAME']} (${process.platform}) at ` + new Date())
@@ -179,6 +186,32 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 				}
 				res.end()
 			})
+		})
+	})
+
+	app.get('/crosby/hostname/', (req, res) => {
+		//	attempt DNS resolve for AssetID and also any reverse IP
+		let result = { ip:"", hosts:[] }
+		dns.lookup(req.query.asset_id, (err, addr, family) => {
+			if (err) {
+				syslog.error(who(req) + `hostname lookup on '${req.query.asset_id}' error :: `, err.message)
+				res.status(500).send({message: err.message})
+				res.end()
+			}
+			else {
+				result.ip = addr
+				if (result.ip) {
+					dns.reverse(result.ip, (err, hosts) => {
+						if (!err) result.hosts = hosts
+						res.send(result)
+						res.end()
+					})
+				}
+				else {
+					res.send(result)
+					res.end()
+				}
+			}
 		})
 	})
 
@@ -322,6 +355,7 @@ function storeToken(token) {
   console.log('Token stored: ', TOKEN_PATH)
 }
 
+//	Linux host process handling
 process.on('SIGHUP', function () {
 	console.log(new Date() + ' :: received hangup')
 	syslog.warn('hangup')
