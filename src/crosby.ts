@@ -192,7 +192,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	app.get('/crosby/hostname/', (req, res) => {
 		//	attempt DNS resolve for AssetID and also any reverse IP
 		let result = { ip:"", hosts:[] }
-		dns.lookup(req.query.asset_id, (err, addr, family) => {
+		dns.lookup(`${req.query.asset_id}.bidmc.harvard.edu`, (err, addr, family) => {
 			if (err) {
 				syslog.error(who(req) + `hostname lookup on '${req.query.asset_id}' error :: `, err.message)
 				res.status(500).send({message: err.message})
