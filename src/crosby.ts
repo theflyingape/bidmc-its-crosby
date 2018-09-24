@@ -164,7 +164,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/devices/chromeos?orgUnitPath={orgUnitPath}&fields=chromeosdevices(annotatedAssetId%2CannotatedLocation%2CannotatedUser%2CdeviceId%2CethernetMacAddress%2CfirmwareVersion%2ClastEnrollmentTime%2ClastSync%2CmacAddress%2Cmeid%2Cmodel%2Cnotes%2CorgUnitPath%2CosVersion%2CplatformVersion%2CserialNumber%2Cstatus%2CsupportEndDate)&key={YOUR_API_KEY}
 	app.get('/crosby/devices/', (req, res) => {
 		authorize(appClientId, (auth) => {
-			let params = <any>{ auth: auth, customerId: 'my_customer', fields: 'chromeosdevices(annotatedAssetId,annotatedLocation,annotatedUser,deviceId,ethernetMacAddress,firmwareVersion,lastEnrollmentTime,lastSync,macAddress,meid,model,notes,orgUnitPath,osVersion,platformVersion,serialNumber,status,supportEndDate)'
+			let params = <any>{ auth: auth, customerId: 'my_customer', fields: 'chromeosdevices(annotatedAssetId,annotatedLocation,annotatedUser,deviceId,ethernetMacAddress,firmwareVersion,lastEnrollmentTime,lastSync,macAddress,meid,model,notes,orgUnitPath,osVersion,platformVersion,serialNumber,status,supportEndDate,bootMode)'
 			}
 			//	https://support.google.com/chrome/a/answer/1698333
 			if (req.query.id) params.query = `id:${req.query.id}`
@@ -191,6 +191,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
 	app.get('/crosby/hostname/', (req, res) => {
 		//	attempt DNS resolve for AssetID and also any reverse IP
+		syslog.note(who(req) + 'hostname lookup on ${req.query.asset_id}')
 		let result = { ip:"", hosts:[] }
 		dns.lookup(`${req.query.asset_id}.bidmc.harvard.edu`, (err, addr, family) => {
 			if (err) {
