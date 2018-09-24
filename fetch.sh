@@ -5,7 +5,7 @@ DIR="`pwd`/static/dir"
 TS="`date +'%Y%m%d-%H'`"
 
 FILE="${DIR}/data/bidmc-cros-${TS}.json"
-curl -k http://localhost:3333/crosby/devices -o "${FILE}" &> /dev/null
+curl --noproxy '*' -k https://localhost:3333/crosby/devices -o "${FILE}" &> /dev/null
 [ -f "${FILE}" ] || exit 1
 
 [ -s "${DIR}/data/latest.json" ] && rm -f "${DIR}/data/latest.json"
