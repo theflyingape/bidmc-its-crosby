@@ -14,7 +14,7 @@ let inFile = rest.shift();
 let outFile = rest.shift();
 //  parse input file to determine which output template to use
 let form = path.basename(outFile).split('-')[0];
-let template = path.dirname(outFile) + `/${form}.xlsx`;
+let template = process.cwd() + `/static/${form}.xlsx`;
 //  data file becomes a new document
 let data = fs.readFileSync(inFile, { encoding: 'utf8' });
 if (inFile.split('.')[1] == 'json') {
