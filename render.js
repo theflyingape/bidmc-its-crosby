@@ -25,13 +25,16 @@ if (inFile.split('.')[1] == 'json') {
                     : n1.annotatedAssetId > n2.annotatedAssetId ? 1
                         : 0;
     });
-    data = `orgUnitPath\tannotatedAssetId\tserialNumber\tstatus\tlastEnrollmentTime\tlastSync\tsupportEndDate\tannotatedUser\tannotatedLocation\n`;
+    data =
+        `orgUnitPath\tannotatedAssetId\tserialNumber\tstatus\tlastEnrollmentTime\tlastSync\tsupportEndDate\tannotatedUser\tannotatedLocation\tdeviceId\tethernetMacAddress\tmacAddress\tfirmwareVersion\tmeid\tmodel\tosVersion\tplatformVersion\tbootMode\tnotes\n`;
     for (var i in json) {
         json[i].annotatedLocation = json[i].annotatedLocation || '';
         json[i].lastEnrollmentTime = new Date(json[i].lastEnrollmentTime).toLocaleString().replace(',', '');
         json[i].lastSync = new Date(json[i].lastSync).toLocaleString().replace(',', '');
         json[i].supportEndDate = json[i].supportEndDate || '';
-        data += `${json[i].orgUnitPath}\t${json[i].annotatedAssetId}\t${json[i].serialNumber}\t${json[i].status}\t${json[i].lastEnrollmentTime}\t${json[i].lastSync}\t${json[i].supportEndDate}\t${json[i].annotatedUser}\t${json[i].annotatedLocation}\n`;
+        if (json[i].notes)
+            json[i].notes = json[i].notes.replace(/(\r\n|\n|\r)/gm, ' ');
+        data += `${json[i].orgUnitPath}\t${json[i].annotatedAssetId}\t${json[i].serialNumber}\t${json[i].status}\t${json[i].lastEnrollmentTime}\t${json[i].lastSync}\t${json[i].supportEndDate}\t${json[i].annotatedUser}\t${json[i].annotatedLocation}\t${json[i].deviceId}\t${json[i].ethernetMacAddress}\t${json[i].macAddress}\t${json[i].firmwareVersion}\t${json[i].meid}\t${json[i].model}\t${json[i].osVersion}\t${json[i].platformVersion}\t${json[i].bootMode}\t${json[i].notes}\n`;
     }
 }
 let columns = {

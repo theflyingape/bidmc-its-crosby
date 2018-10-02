@@ -14,7 +14,7 @@ let outFile = rest.shift()
 
 //  parse input file to determine which output template to use
 let form = path.basename(outFile).split('-')[0]
-let template = path.dirname(outFile) + `/${form}.xlsx`
+let template = process.cwd() + `/static/${form}.xlsx`
 
 //  data file becomes a new document
 let data = fs.readFileSync(inFile, { encoding : 'utf8'})
@@ -34,7 +34,8 @@ if (inFile.split('.')[1] == 'json') {
         json[i].lastEnrollmentTime = new Date(json[i].lastEnrollmentTime).toLocaleString().replace(',','')
         json[i].lastSync = new Date(json[i].lastSync).toLocaleString().replace(',','')
         json[i].supportEndDate = json[i].supportEndDate || ''
-        json[i].notes = json[i].notes.replace(/(\r\n|\n|\r)/gm, ' ')
+        if (json[i].notes)
+            json[i].notes = json[i].notes.replace(/(\r\n|\n|\r)/gm, ' ')
         data += `${json[i].orgUnitPath}\t${json[i].annotatedAssetId}\t${json[i].serialNumber}\t${json[i].status}\t${json[i].lastEnrollmentTime}\t${json[i].lastSync}\t${json[i].supportEndDate}\t${json[i].annotatedUser}\t${json[i].annotatedLocation}\t${json[i].deviceId}\t${json[i].ethernetMacAddress}\t${json[i].macAddress}\t${json[i].firmwareVersion}\t${json[i].meid}\t${json[i].model}\t${json[i].osVersion}\t${json[i].platformVersion}\t${json[i].bootMode}\t${json[i].notes}\n`
     }
 }

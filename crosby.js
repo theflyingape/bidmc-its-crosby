@@ -61,8 +61,8 @@ authorize(exports.appClientId, (auth) => {
         console.log(response.status, response.statusText, response.data.domainName);
     });
 });
-//dns.lookup('localhost', (err, addr, family) => {
-dns.lookup('0.0.0.0', (err, addr, family) => {
+dns.lookup('localhost', (err, addr, family) => {
+    //dns.lookup('0.0.0.0', (err, addr, family) => {
     const app = express();
     app.set('trust proxy', ['loopback', addr]);
     let port = parseInt(process.env.PORT) || 3333;
@@ -148,21 +148,39 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
                 params.query = `ethernet_mac:${req.query.ethernet_mac}`;
             if (req.query.wifi_mac)
                 params.query = `wifi_mac:${req.query.wifi_mac}`;
-            directory.chromeosdevices.list(params, (err, response) => {
-                if (err) {
-                    syslog.error(who(req) + `fetch devices ${params.query || 'all'}:: `, err.message);
-                    res.status(500).send({ message: err.message });
-                }
-                else {
-                    syslog.note(who(req) + `fetch devices ${params.query || 'all'}`);
-                    let result = {};
-                    if (response.data.chromeosdevices) {
-                        result = params.query ? response.data.chromeosdevices[0] : response.data.chromeosdevices;
+            //	filtered, so let's handle only the first one for now ...
+            if (params.query)
+                params.maxResults = 1;
+            else {
+                params = { auth: auth, customerId: 'my_customer', projection: 'FULL' };
+                //params.pageToken = ''
+            }
+            syslog.note(who(req) + `fetch devices ${params.query || 'all'}`);
+            let result = [];
+            list();
+            function list() {
+                directory.chromeosdevices.list(params, (err, response) => {
+                    if (err) {
+                        syslog.error(who(req) + `fetch devices ${params.query || 'all'}:: `, err.message);
+                        result = undefined;
+                        res.status(500).send({ message: err.message });
+                        res.end();
                     }
-                    res.send(result);
-                }
-                res.end();
-            });
+                    else {
+                        if (response.data.chromeosdevices) {
+                            result = result.concat(response.data.chromeosdevices);
+                            if (response.data.nextPageToken) {
+                                params.pageToken = response.data.nextPageToken;
+                                list();
+                            }
+                            else {
+                                res.send(result);
+                                res.end();
+                            }
+                        }
+                    }
+                });
+            }
         });
     });
     app.get('/crosby/hostname/', (req, res) => {

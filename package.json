@@ -1,6 +1,6 @@
 {
   "name": "crosby",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "Chrome OS gateway to our Google for My Business APIs",
   "main": "crosby.js",
   "scripts": {
@@ -14,13 +14,13 @@
     "carbone": "^1.1.0",
     "csvjson": "^5.1.0",
     "express": "^4.16.3",
-    "express-fileupload": "^0.4.0",
-    "googleapis": "^33.0.0",
+    "express-fileupload": "^1.0.0-alpha.1",
+    "googleapis": "^34.0.0",
     "modern-syslog": "^1.1.4"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",
     "@types/express-fileupload": "^0.4.0",
-    "@types/node": "^10.10.1"
+    "@types/node": "^10.11.3"
   }
 }

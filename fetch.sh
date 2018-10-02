@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd "`dirname $0`"
-DIR="`pwd`/static/dir"
+DIR="/var/www/html/devices"
 TS="`date +'%Y%m%d-%H'`"
 
 FILE="${DIR}/data/bidmc-cros-${TS}.json"
