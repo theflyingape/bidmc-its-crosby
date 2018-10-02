@@ -12,7 +12,7 @@ curl --noproxy '*' -k https://localhost:3333/crosby/devices -o "${FILE}" &> /dev
 ln -s "${FILE}" "${DIR}/data/latest.json"
 
 NODE=`which node &> /dev/null`
-[ -z "${NODE}" ] && source /etc/profile.d/nodejs.sh
+[ -z "${NODE}" ] && NODE=/opt/rh/rh-nodejs8/root/usr/bin/node
 
 CSV="${DIR}/data/bidmc-cros-${TS}.csv"
 XLSX="${DIR}/sheets/report-${TS}.xlsx"
