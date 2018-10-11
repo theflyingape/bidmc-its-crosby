@@ -210,7 +210,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
 	app.get('/crosby/hostname/', (req, res) => {
 		//	attempt DNS resolve for AssetID and also any reverse IP
-		syslog.note(who(req) + 'hostname lookup on ${req.query.asset_id}')
+		syslog.note(who(req) + `hostname lookup on ${req.query.asset_id}`)
 		let result = { ip:"", hosts:[] }
 		dns.lookup(`${req.query.asset_id}.bidmc.harvard.edu`, (err, addr, family) => {
 			if (err) {
