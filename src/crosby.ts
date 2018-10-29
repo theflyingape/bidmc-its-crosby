@@ -257,10 +257,10 @@ dns.lookup('localhost', (err, addr, family) => {
 	app.post('/crosby/patch', function (req, res) {
 		authorize(appClientId, (auth) => {
 			let patch = <any>{}
-			if (req.query.annotatedAssetId) patch.annotatedAssetId = req.query.annotatedAssetId
-			if (req.query.annotatedLocation) patch.annotatedLocation = req.query.annotatedLocation
-			if (req.query.annotatedUser) patch.annotatedUser = req.query.annotatedUser
-			if (req.query.notes) patch.notes = req.query.notes
+			patch.annotatedAssetId = req.query.annotatedAssetId || ''
+			patch.annotatedLocation = req.query.annotatedLocation  || ''
+			patch.annotatedUser = req.query.annotatedUser || ''
+			patch.notes = req.query.notes || ''
 			directory.chromeosdevices.patch({ auth: auth,
 				customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
 			}, (err, response) => {

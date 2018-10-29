@@ -185,7 +185,7 @@ dns.lookup('localhost', (err, addr, family) => {
     });
     app.get('/crosby/hostname/', (req, res) => {
         //	attempt DNS resolve for AssetID and also any reverse IP
-        syslog.note(who(req) + 'hostname lookup on ${req.query.asset_id}');
+        syslog.note(who(req) + `hostname lookup on ${req.query.asset_id}`);
         let result = { ip: "", hosts: [] };
         dns.lookup(`${req.query.asset_id}.bidmc.harvard.edu`, (err, addr, family) => {
             if (err) {
@@ -231,14 +231,10 @@ dns.lookup('localhost', (err, addr, family) => {
     app.post('/crosby/patch', function (req, res) {
         authorize(exports.appClientId, (auth) => {
             let patch = {};
-            if (req.query.annotatedAssetId)
-                patch.annotatedAssetId = req.query.annotatedAssetId;
-            if (req.query.annotatedLocation)
-                patch.annotatedLocation = req.query.annotatedLocation;
-            if (req.query.annotatedUser)
-                patch.annotatedUser = req.query.annotatedUser;
-            if (req.query.notes)
-                patch.notes = req.query.notes;
+            patch.annotatedAssetId = req.query.annotatedAssetId || '';
+            patch.annotatedLocation = req.query.annotatedLocation || '';
+            patch.annotatedUser = req.query.annotatedUser || '';
+            patch.notes = req.query.notes || '';
             directory.chromeosdevices.patch({ auth: auth,
                 customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
             }, (err, response) => {
