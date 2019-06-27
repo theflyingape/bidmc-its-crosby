@@ -1,26 +1,33 @@
 {
   "name": "crosby",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Chrome OS gateway to our Google for My Business APIs",
   "main": "crosby.js",
+  "os": [
+    "linux"
+  ],
+  "engines": {
+    "node": ">=10.10"
+  },
   "scripts": {
-    "build": "tsc -p ./src --outDir .",
+    "build": "./tsc -p ./src --outDir .",
     "sudo": "sudo /opt/node/bin/node crosby; exit 0",
     "test": "/opt/node/bin/node crosby; exit 0"
   },
   "author": "Robert Hurst",
   "license": "MIT",
   "dependencies": {
-    "carbone": "^1.1.0",
+    "carbone": "^1.2.1",
     "csvjson": "^5.1.0",
-    "express": "^4.16.3",
-    "express-fileupload": "^1.0.0-alpha.1",
-    "googleapis": "^34.0.0",
-    "modern-syslog": "^1.1.4"
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.5",
+    "googleapis": "^40.0.0",
+    "modern-syslog": "^1.2.0"
   },
   "devDependencies": {
-    "@types/express": "^4.16.0",
-    "@types/express-fileupload": "^0.4.0",
-    "@types/node": "^10.11.3"
+    "@types/express": "^4.17.0",
+    "@types/express-fileupload": "^1.1.0",
+    "@types/node": "^10.14.10",
+    "typescript": "^3.5.2"
   }
 }
