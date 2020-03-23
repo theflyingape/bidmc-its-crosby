@@ -10,7 +10,7 @@ import fs = require('fs')
 import readline = require('readline')
 import syslog = require('modern-syslog')
 
-//	Google APIs v33
+//	Google APIs v40
 import { GoogleApis } from 'googleapis'
 import { GoogleAuth, JWT, OAuth2Client } from 'google-auth-library'
 //v29 - no longer required
@@ -48,8 +48,7 @@ process.title = 'crosby'
 syslog.open(process.title)
 syslog.upto(6)	//	LOG_INFO
 
-function who(req): string
-{
+function who(req): string {
 	let client = req.header('x-forwarded-for') || req.hostname
 	let who = '<anonymous>'
 	if (req.header('authorization'))
@@ -74,9 +73,10 @@ const directory = google.admin('directory_v1')
 //const directory = google.admin<Admin>('directory_v1')
 
 authorize(appClientId, (auth) => {
-	directory.domains.get({ auth: auth,
+	directory.domains.get({
+		auth: auth,
 		customer: 'my_customer', domainName: 'bidmc.harvard.edu'
-		}, (err, response) => {
+	}, (err, response) => {
 		if (err) {
 			syslog.error('test fetch domain :: ', err)
 			return
@@ -86,7 +86,7 @@ authorize(appClientId, (auth) => {
 })
 
 dns.lookup('localhost', (err, addr, family) => {
-//dns.lookup('0.0.0.0', (err, addr, family) => {
+	//dns.lookup('0.0.0.0', (err, addr, family) => {
 
 	const app = express()
 	app.set('trust proxy', ['loopback', addr])
@@ -117,12 +117,13 @@ dns.lookup('localhost', (err, addr, family) => {
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?type=all&key={YOUR_API_KEY}
 	app.get('/crosby/ou/', (req, res) => {
 		authorize(appClientId, (auth) => {
-			directory.orgunits.list({ auth: auth,
+			directory.orgunits.list({
+				auth: auth,
 				customerId: 'my_customer', type: 'all'
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'fetch ou list :: ', err.message)
-					res.status(500).send({message: err.message})
+					res.status(500).send({ message: err.message })
 				}
 				else {
 					syslog.note(who(req) + 'fetch ou list')
@@ -134,7 +135,7 @@ dns.lookup('localhost', (err, addr, family) => {
 						if (x > y) { return 1 }
 						return 0
 					})
-					let data = ou.map((i) => { return { key:i.orgUnitPath, value:i.orgUnitId.split(':')[1] } })
+					let data = ou.map((i) => { return { key: i.orgUnitPath, value: i.orgUnitId.split(':')[1] } })
 					res.send(data)
 				}
 				res.end()
@@ -145,12 +146,13 @@ dns.lookup('localhost', (err, addr, family) => {
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/{customerId}/devices/chromeos/{deviceId}?key={YOUR_API_KEY}
 	app.get('/crosby/device/', (req, res) => {
 		authorize(appClientId, (auth) => {
-			directory.chromeosdevices.get({ auth: auth,
+			directory.chromeosdevices.get({
+				auth: auth,
 				customerId: 'my_customer', deviceId: req.query.id
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'fetch device :: ', err.message)
-					res.status(500).send({message: err.message})
+					res.status(500).send({ message: err.message })
 				}
 				else {
 					syslog.note(who(req) + `fetch device ${req.query.id}`)
@@ -164,7 +166,8 @@ dns.lookup('localhost', (err, addr, family) => {
 	//	GET https://www.googleapis.com/admin/directory/v1/customer/my_customer/devices/chromeos?orgUnitPath={orgUnitPath}&fields=chromeosdevices(annotatedAssetId%2CannotatedLocation%2CannotatedUser%2CdeviceId%2CethernetMacAddress%2CfirmwareVersion%2ClastEnrollmentTime%2ClastSync%2CmacAddress%2Cmeid%2Cmodel%2Cnotes%2CorgUnitPath%2CosVersion%2CplatformVersion%2CserialNumber%2Cstatus%2CsupportEndDate)&key={YOUR_API_KEY}
 	app.get('/crosby/devices/', (req, res) => {
 		authorize(appClientId, (auth) => {
-			let params = <any>{ auth: auth, customerId: 'my_customer', fields: 'chromeosdevices(annotatedAssetId,annotatedLocation,annotatedUser,deviceId,ethernetMacAddress,firmwareVersion,lastEnrollmentTime,lastSync,macAddress,meid,model,notes,orgUnitPath,osVersion,platformVersion,serialNumber,status,supportEndDate,bootMode)'
+			let params = <any>{
+				auth: auth, customerId: 'my_customer', fields: 'chromeosdevices(annotatedAssetId,annotatedLocation,annotatedUser,deviceId,ethernetMacAddress,firmwareVersion,lastEnrollmentTime,lastSync,macAddress,meid,model,notes,orgUnitPath,osVersion,platformVersion,serialNumber,status,supportEndDate,bootMode)'
 			}
 			//	https://support.google.com/chrome/a/answer/1698333
 			if (req.query.id) params.query = `id:${req.query.id}`
@@ -187,7 +190,7 @@ dns.lookup('localhost', (err, addr, family) => {
 					if (err) {
 						syslog.error(who(req) + `fetch devices ${params.query || 'all'}:: `, err.message)
 						result = undefined
-						res.status(500).send({message: err.message})
+						res.status(500).send({ message: err.message })
 						res.end()
 					}
 					else {
@@ -211,11 +214,11 @@ dns.lookup('localhost', (err, addr, family) => {
 	app.get('/crosby/hostname/', (req, res) => {
 		//	attempt DNS resolve for AssetID and also any reverse IP
 		syslog.note(who(req) + `hostname lookup on ${req.query.asset_id}`)
-		let result = { ip:"", hosts:[] }
+		let result = { ip: "", hosts: [] }
 		dns.lookup(`${req.query.asset_id}.bidmc.harvard.edu`, (err, addr, family) => {
 			if (err) {
 				syslog.error(who(req) + `hostname lookup on '${req.query.asset_id}' error :: `, err.message)
-				res.status(500).send({message: err.message})
+				res.status(500).send({ message: err.message })
 				res.end()
 			}
 			else {
@@ -237,13 +240,14 @@ dns.lookup('localhost', (err, addr, family) => {
 
 	app.post('/crosby/move', function (req, res) {
 		authorize(appClientId, (auth) => {
-			let deviceIds = { deviceIds: [ req.query.id ] }
-			directory.chromeosdevices.moveDevicesToOu({ auth: auth,
+			let deviceIds = { deviceIds: [req.query.id] }
+			directory.chromeosdevices.moveDevicesToOu({
+				auth: auth,
 				customerId: 'my_customer', orgUnitPath: req.query.ou, requestBody: deviceIds
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'move device :: ', err.message)
-					res.status(500).send({message: err.message})
+					res.status(500).send({ message: err.message })
 				}
 				else {
 					syslog.note(who(req) + `move device ${req.query.id} to ${req.query.ou}`)
@@ -258,15 +262,16 @@ dns.lookup('localhost', (err, addr, family) => {
 		authorize(appClientId, (auth) => {
 			let patch = <any>{}
 			patch.annotatedAssetId = req.query.annotatedAssetId || ''
-			patch.annotatedLocation = req.query.annotatedLocation  || ''
+			patch.annotatedLocation = req.query.annotatedLocation || ''
 			patch.annotatedUser = req.query.annotatedUser || ''
 			patch.notes = req.query.notes || ''
-			directory.chromeosdevices.patch({ auth: auth,
+			directory.chromeosdevices.patch({
+				auth: auth,
 				customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'patch device :: ', err.message)
-					res.status(500).send({message: err.message})
+					res.status(500).send({ message: err.message })
 				}
 				else {
 					syslog.note(who(req) + `patch device ${req.query.id} with ${JSON.stringify(patch)}`)
@@ -284,7 +289,7 @@ dns.lookup('localhost', (err, addr, family) => {
 		let config = <fileUpload.UploadedFile>req.files.file
 		syslog.note(who(req) + `upload file ${config.name} requested`)
 		if (config.name == 'gc-by-ou.json')
-			config.mv(process.cwd() + '/static/' + config.name, function(err) {
+			config.mv(process.cwd() + '/static/' + config.name, function (err) {
 				if (err) {
 					syslog.error(who(req) + err)
 					return res.status(500).send(err)
@@ -307,11 +312,11 @@ dns.lookup('localhost', (err, addr, family) => {
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials: oauth_clientid, callback) {
-  var clientSecret = credentials.installed.client_secret
-  var clientId = credentials.installed.client_id
-  var redirectUrl = credentials.installed.redirect_uris[0]
-  var auth = new GoogleAuth()
-  var oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl)
+	var clientSecret = credentials.installed.client_secret
+	var clientId = credentials.installed.client_id
+	var redirectUrl = credentials.installed.redirect_uris[0]
+	var auth = new GoogleAuth()
+	var oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl)
 
 	// Check if we have previously stored a token.
 	let token = ''
@@ -335,27 +340,27 @@ function authorize(credentials: oauth_clientid, callback) {
  *     client.
  */
 function getNewToken(oauth2Client, callback) {
-  var authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES
-  });
-  console.log('Authorize this app by visiting this url: ', authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close()
-    oauth2Client.getToken(code, function(err, token) {
-      if (err) {
-        console.log('Error while trying to retrieve access token', err)
-        return
-      }
-      oauth2Client.credentials = token
-      storeToken(token)
-      callback(oauth2Client)
-    })
-  })
+	var authUrl = oauth2Client.generateAuthUrl({
+		access_type: 'offline',
+		scope: SCOPES
+	});
+	console.log('Authorize this app by visiting this url: ', authUrl);
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	})
+	rl.question('Enter the code from that page here: ', (code) => {
+		rl.close()
+		oauth2Client.getToken(code, function (err, token) {
+			if (err) {
+				console.log('Error while trying to retrieve access token', err)
+				return
+			}
+			oauth2Client.credentials = token
+			storeToken(token)
+			callback(oauth2Client)
+		})
+	})
 }
 
 /**
@@ -364,15 +369,15 @@ function getNewToken(oauth2Client, callback) {
  * @param {Object} token The token to store to disk.
  */
 function storeToken(token) {
-  try {
-    fs.mkdirSync(TOKEN_DIR)
-  } catch (err) {
-    if (err.code != 'EEXIST') {
-      throw err
-    }
-  }
-  fs.writeFileSync(TOKEN_PATH, JSON.stringify(token))
-  console.log('Token stored: ', TOKEN_PATH)
+	try {
+		fs.mkdirSync(TOKEN_DIR)
+	} catch (err) {
+		if (err.code != 'EEXIST') {
+			throw err
+		}
+	}
+	fs.writeFileSync(TOKEN_PATH, JSON.stringify(token))
+	console.log('Token stored: ', TOKEN_PATH)
 }
 
 //	Linux host process handling
@@ -381,19 +386,19 @@ process.on('SIGHUP', function () {
 	syslog.warn('hangup')
 	process.exit()
 })
-  
+
 process.on('SIGINT', function () {
 	console.log(new Date() + ' :: received interrupt')
 	syslog.warn('interrupt')
 	process.exit()
 })
-  
+
 process.on('SIGQUIT', function () {
 	console.log(new Date() + ' :: received quit')
 	syslog.warn('quit')
 	process.exit()
 })
-  
+
 process.on('SIGTERM', function () {
 	console.log(new Date() + ' shutdown')
 	syslog.note('terminated')

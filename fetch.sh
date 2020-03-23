@@ -11,6 +11,7 @@ curl --noproxy '*' -k https://localhost:3333/crosby/devices -o "${FILE}" &> /dev
 [ -s "${DIR}/data/latest.json" ] && rm -f "${DIR}/data/latest.json"
 ln -s "${FILE}" "${DIR}/data/latest.json"
 
+source /etc/profile.d/nodejs.sh
 NODE=`which node &> /dev/null`
 [ -z "${NODE}" ] && NODE=/opt/rh/rh-nodejs8/root/usr/bin/node
 
