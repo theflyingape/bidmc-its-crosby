@@ -13,7 +13,7 @@ ln -s "${FILE}" "${DIR}/data/latest.json"
 
 source /etc/profile.d/nodejs.sh
 NODE=`which node &> /dev/null`
-[ -z "${NODE}" ] && NODE=/opt/rh/rh-nodejs8/root/usr/bin/node
+[ -z "${NODE}" ] && NODE=/opt/rh/rh-nodejs14/root/usr/bin/node
 
 CSV="${DIR}/data/bidmc-cros-${TS}.csv"
 XLSX="${DIR}/sheets/report-${TS}.xlsx"

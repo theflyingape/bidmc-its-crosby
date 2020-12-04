@@ -148,7 +148,7 @@ dns.lookup('localhost', (err, addr, family) => {
 		authorize(appClientId, (auth) => {
 			directory.chromeosdevices.get({
 				auth: auth,
-				customerId: 'my_customer', deviceId: req.query.id
+				customerId: 'my_customer', deviceId: req.query.id.toString()
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'fetch device :: ', err.message)
@@ -240,10 +240,10 @@ dns.lookup('localhost', (err, addr, family) => {
 
 	app.post('/crosby/move', function (req, res) {
 		authorize(appClientId, (auth) => {
-			let deviceIds = { deviceIds: [req.query.id] }
+			let deviceIds = { deviceIds: [req.query.id.toString()] }
 			directory.chromeosdevices.moveDevicesToOu({
 				auth: auth,
-				customerId: 'my_customer', orgUnitPath: req.query.ou, requestBody: deviceIds
+				customerId: 'my_customer', orgUnitPath: req.query.ou.toString(), requestBody: deviceIds
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'move device :: ', err.message)
@@ -267,7 +267,7 @@ dns.lookup('localhost', (err, addr, family) => {
 			patch.notes = req.query.notes || ''
 			directory.chromeosdevices.patch({
 				auth: auth,
-				customerId: 'my_customer', deviceId: req.query.id, requestBody: patch
+				customerId: 'my_customer', deviceId: req.query.id.toString(), requestBody: patch
 			}, (err, response) => {
 				if (err) {
 					syslog.error(who(req) + 'patch device :: ', err.message)
