@@ -6,11 +6,10 @@ After=local-fs.target network-online.target
 Type=simple
 User=root
 Group=wheel
-ExecStart=/opt/rh/rh-nodejs14/root/usr/bin/node crosby
+ExecStart=/usr/bin/node crosby
 KillMode=process
 SyslogIdentifier=crosby
 WorkingDirectory=/opt/crosby
-#TasksMax=200
 
 [Install]
 WantedBy=multi-user.target

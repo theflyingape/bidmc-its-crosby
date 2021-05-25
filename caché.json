@@ -1,0 +1,6 @@
+{
+  "tcp_port": 1972,
+  "stop_signal": "SIGINT,SIGTERM",
+  "lock": 1,
+  "debug": 0
+}
